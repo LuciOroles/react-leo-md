@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
+import SearchForm from "./components/SearchForm";
+import Shortlist from "./components/Shortlist";
+import Card from "./components/Card";
 
 class App extends Component {
   constructor() {
@@ -7,25 +10,6 @@ class App extends Component {
     this.state = {
       movies: []
     };
-  }
-
-  componentDidMount() {
-    let tmdbRequest = new Request(
-      "https://api.themoviedb.org/3/search/movie?include_adult=false&page=1&query=game%20of%20thrones&language=en-US&api_key=d1e5532be9d5c4de6ad35098d60b22a2",
-      { method: "GET" }
-    );
-    // fetch(tmdbRequest)
-    //   .then(resp => {
-    //     return resp.json();
-    //   })
-    //   .catch(console.error)
-    //   .then(data => {
-    //     debugger;
-    //     this.setState({
-    //       movies: data.results
-    //     });
-    //   })
-    //   .catch(console.error);
   }
 
   render() {
@@ -43,6 +27,10 @@ class App extends Component {
             })
             .concat("")
         )}
+        <Card />
+        <SearchForm />
+        <hr />
+        <Shortlist />
       </div>
     );
   }

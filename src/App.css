@@ -21,12 +21,29 @@
 .App-link {
   color: #61dafb;
 }
+.imageCtrl {
+  max-width: 8em;
+  max-height: 8em;
+}
+.imageCtrl img {
+  max-width: 100%;
+}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.shortlist .fav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.shortlist .fav button {
+  width: 4em;
+}
+.shortlist .fav button.favorited {
+  background-color: #2296f3;
+}
+.shortlist .fav button.watchLater {
+  background-color: #f3de22;
+}
+.card.wrapper {
+  width: 9rem;
 }
