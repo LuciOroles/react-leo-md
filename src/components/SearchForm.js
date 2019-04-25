@@ -2,98 +2,89 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { moviesFetchData } from "../actions/movies";
 import { shortlistAdd } from "../actions/shortlist";
+import List from "./List";
 
 const mapStateToProps = state => {
-  return {
-    movies: state.movies,
-    hasErrored: state.moviesHasError,
-    isLoading: state.moviesIsLoading
-  };
+	return {
+		movies: state.movies,
+		hasErrored: state.moviesHasError,
+		isLoading: state.moviesIsLoading,
+		shortlist: state.shortlist
+	};
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    fetchData: url => dispatch(moviesFetchData(url)),
-    shortlistAdd: movie => dispatch(shortlistAdd(movie))
-  };
+	return {
+		fetchData: url => dispatch(moviesFetchData(url)),
+		shortlistAdd: movie => dispatch(shortlistAdd(movie))
+	};
 };
 class SearchForm extends Component {
-  constructor() {
-    super();
-    this.state = {
-      url:
-        "https://api.themoviedb.org/3/search/movie?include_adult=false&page=1&query=game%20of%20thrones&language=en-US&api_key=d1e5532be9d5c4de6ad35098d60b22a2",
-      mockUrl: "http://localhost:9888/movies",
-      poster_path: "https://image.tmdb.org/t/p/w185_and_h278_bestv2/"
-    };
-  }
-  render() {
-    const { movies, fetchData, shortlistAdd } = this.props;
-    const { url, mockUrl } = this.state;
-    return (
-      <div>
-        <button
-          type="button"
-          onClick={e => {
-            console.log(e);
-            fetchData(mockUrl);
-          }}
-        >
-          Fetch GoT
-        </button>
-        <div>
-          <div>movie list</div>
-          {movies.map(movie => {
-            return (
-              <div key={movie.id}>
-                {movie.title}
-                <div className="imageCtrl">
-                  <img
-                    src={this.state.poster_path + movie.poster_path}
-                    alt={movie.title}
-                  />
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    onClick={e => {
-                      let mv = Object.assign({}, movie);
-                      mv.later = ["fav"];
-                      shortlistAdd(mv);
-                    }}
-                  >
-                    fav
-                  </button>
-                </div>
-                <div>
-                  <button
-                    type="button"
-                    onClick={e => {
-                      let mv = Object.assign({}, movie);
-                      mv.later = ["later"];
-                      shortlistAdd(mv);
-                    }}
-                  >
-                    later
-                  </button>
-                </div>
-                <hr />
-              </div>
-            );
-          })}
-
-          {/* {this.props.movies.length > 0 ? (
-            this.props.movies.map(movie => <div>{movie.title}</div>).connect("")
-          ) : (
-            <p>No movie yet</p>
-          )} */}
-        </div>
-      </div>
-    );
-  }
+	constructor() {
+		super();
+		this.state = {
+			url:
+				"https://api.themoviedb.org/3/search/movie?include_adult=false&page=1&",
+			query: "query=",
+			key: "&language=en-US&api_key=d1e5532be9d5c4de6ad35098d60b22a2",
+			mockUrl: "http://localhost:9888/movies",
+			poster_path: "https://image.tmdb.org/t/p/w185_and_h278_bestv2/",
+			qinput: ""
+		};
+		this.handleChange = this.handleChange.bind(this);
+	}
+	handleChange(event) {
+		this.setState({ qinput: event.target.value });
+	}
+	render() {
+		const { movies, fetchData, shortlistAdd, shortlist } = this.props;
+		const { url, query, key, qinput } = this.state;
+		let idFav = shortlist.map(shortlistItem => {
+			return {
+				id: shortlistItem.id,
+				later: shortlistItem.later
+			};
+		});
+		let url_comp = url + query + qinput + key;
+		const handleSearch = event => {
+			event.preventDefault();
+			fetchData(url_comp);
+		};
+		return (
+			<div>
+				<form onSubmit={handleSearch}>
+					<div className="input-group mb-3">
+						<input
+							type="text"
+							className="form-control"
+							placeholder="type in movie title"
+							value={qinput}
+							onChange={this.handleChange}
+						/>
+						<div className="input-group-append">
+							<button
+								className="btn btn-outline-secondary"
+								type="button"
+								onClick={handleSearch}
+							>
+								Search
+							</button>
+						</div>
+					</div>
+				</form>
+				<div>
+					<List
+						movies={movies}
+						shortlist={idFav}
+						shortlistOperation={shortlistAdd}
+					/>
+				</div>
+			</div>
+		);
+	}
 }
 
 export default connect(
-  mapStateToProps,
-  mapDispatchToProps
+	mapStateToProps,
+	mapDispatchToProps
 )(SearchForm);
